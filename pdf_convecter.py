@@ -24,8 +24,13 @@ def pdf_2_clean_txt(in_directory, out_directory):
         in_text = in_text.decode('utf-8').split()
 
         with open(out_directory + '/' + 'outputfile'+str(i)+'.txt', 'w') as f_out:
-            t = (out_directory + '/' + 'outputfile'+str(i)+'.txt')
-            cursor.execute('INSERT INTO files (newfilename) VALUES(?)', t)
+            t = ((out_directory + '/' + 'outputfile' + str(i) + '.txt'), file)
+            cursor.execute('SELECT checksum FROM files WHERE filename = ?', (t[1],))
+            check_sum = cursor.fetchall()
+            if check_sum:
+            #print(check_sum)
+            #print(type(check_sum))
+                cursor.execute('UPDATE files SET newfilename = ?  WHERE checksum = ?', (t[0], check_sum[0][0]))
             for word in in_text:
                 word = re.sub("[\W\d\_]", '', word)
                 if word != '':

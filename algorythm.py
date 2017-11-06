@@ -14,16 +14,16 @@ def tf_idf(input_text):
     return vect.vocabulary_
 
 
-
+'''
 bards_words =["The fool doth think he is wise,",
 "but the wise man knows himself to be a fool"]
 
-tf_idf(bards_words)
+tf_idf("The fool doth think he is wise,")
 
 
 
 
-'''
+
 def bag_of_words(input_text):
 
     vect = CountVectorizer().fit(input_text)

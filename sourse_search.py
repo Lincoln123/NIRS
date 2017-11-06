@@ -11,7 +11,7 @@ def get_api():
     '''
     api = vk.API(vk.Session(
         access_token=
-        '48907e92f126e95906b049a4dd120cd64306c500ddd8f32ad04291f78dff34b823c4221f18e97bfb34810'))
+        '5516984b37b462038fd3b0d87d3693c23210e4349de700e6770741125cf0534a3c4ee26f82eec914a1df6'))
     return api
 
 
@@ -55,16 +55,16 @@ def parse_groups(group_id):
                     check_sum = hashlib.sha256(f.read()).hexdigest()
                 #проверка на совпадение в таблице
                 t = (group_id, fname, check_sum)
-                cursor.execute('SELECT gid,filename FROM files WHERE checksum = ?', t[2])
+                cursor.execute('SELECT gid,filename FROM files WHERE checksum = ?', (t[2],))
                 list_of_correlations = cursor.fetchall()
-                if list_of_correlations is not None:
+                if list_of_correlations:
                     os.remove('./input2/' + fname)
                     #удалить файл
                     for i in list_of_correlations:
                         if i[0] != group_id or i[1] != fname:
                             cursor.execute('INSERT INTO files (gid,filename,checksum) VALUES(?,?,?)',t)
                 else:
-                    cursor.execute('INSERT INTO files (gid,filename,checksum) VALUES(?,?,?)',t)
+                    cursor.execute('INSERT INTO files (gid,filename,checksum) VALUES(?,?,?)', t)
                 con.commit()
 
     except vk.exceptions.VkAPIError:
@@ -81,9 +81,9 @@ def parse_groups(group_id):
                 with open('./input2/' + fname, 'rb') as f:
                     check_sum = hashlib.sha256(f.read()).hexdigest()
                 t = (group_id, fname, check_sum)
-                cursor.execute('SELECT gid,filename FROM files WHERE checksum = ?', t[2])
+                cursor.execute('SELECT gid,filename FROM files WHERE checksum = ?', (t[2],))
                 list_of_correlations = cursor.fetchall()
-                if list_of_correlations is not None:
+                if list_of_correlations:
                     os.remove('./input2/' + fname)
                     for i in list_of_correlations:
                         if i[0] != group_id or i[1] != fname:

@@ -1,4 +1,5 @@
 import sqlite3
+t = ('.txt', 'a', 'x')
 
 con = sqlite3.connect('./Texts_db.sqlite')
 cursor = con.cursor()
@@ -7,3 +8,4 @@ status VARCHAR(4))')
 con.commit()
 
 con.close()
+

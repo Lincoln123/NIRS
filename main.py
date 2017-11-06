@@ -1,9 +1,9 @@
 import pdf_convecter as pd
 import sourse_search as ss
 import algorythm as al
-import my_db
+import my_db as db
 
-'''
+
 
 for id in ss.search_for_targetgroups():
     ss.parse_groups(id)
@@ -16,16 +16,24 @@ for file in pd.os.listdir('./output2'):
     text = open('./output2/' + file, 'r')
     al.tf_idf(text)
     text.close()
-'''
-X_base = al.tf_idf('./output/file')
-
-for file in pd.os.listdir('./output2'):
-    with open(file,'r'):
-        matches = 0
-        X_test = al.tf_idf(file)
-        for word in X_test.keys():
-            if word == baseword for baseword in X_base.keys():
-                matches += 1
+with open('./output/outputfile1.txt', 'r') as base_file:
+    base_file = list(base_file.read().split(','))
+    X_base = al.tf_idf(base_file)
+    con = db.sqlite3.connect('./Texts_db.sqlite')
+    cursor = con.cursor()
+    for file in pd.os.listdir('./output2'):
+        filename = './output2/' + file
+        with open(filename, 'r') as file:
+            X_test = al.tf_idf(list(file.read().split(',')))
+            matches = len(set(X_base) & set(X_test))
+            score = matches / len(X_test.keys())
+            print(score)
+            if score > 0.5:
+                cursor.execute('UPDATE files SET status = "Bad" WHERE newfilename = ?', (filename,))
+            else:
+                cursor.execute('UPDATE files SET status = "Good" WHERE newfilename = ?', (filename,))
         #вынос вердикта
         #и занесение в бд
-        print(matches // len(X_test.keys) * 100,'%', file)
+con.commit()
+con.close()
+
