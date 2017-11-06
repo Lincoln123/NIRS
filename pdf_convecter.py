@@ -2,7 +2,7 @@ import textract
 import pymorphy2
 import re
 import os
-
+import sqlite3
 
 def pdf_2_clean_txt(in_directory, out_directory):
 
@@ -13,6 +13,8 @@ def pdf_2_clean_txt(in_directory, out_directory):
     :return:
     '''
 
+    con = sqlite3.connect('./Texts_db.sqlite')
+    cursor = con.cursor()
     morph = pymorphy2.MorphAnalyzer()
     i = 1
 
@@ -21,12 +23,16 @@ def pdf_2_clean_txt(in_directory, out_directory):
         in_text = textract.process(in_directory+"/"+file)
         in_text = in_text.decode('utf-8').split()
 
-        with open(out_directory + '/' + 'output'+str(i)+'.txt', 'w') as f_out:
+        with open(out_directory + '/' + 'outputfile'+str(i)+'.txt', 'w') as f_out:
+            t = (out_directory + '/' + 'outputfile'+str(i)+'.txt')
+            cursor.execute('INSERT INTO files (newfilename) VALUES(?)', t)
             for word in in_text:
                 word = re.sub("[\W\d\_]", '', word)
                 if word != '':
                     f_out.write(morph.parse(word)[0].normal_form+', ')
         i += 1
+    con.commit()
+    con.close()
     return
 
 
