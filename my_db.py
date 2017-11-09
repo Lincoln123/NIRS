@@ -1,11 +1,14 @@
+"""
+This module creates database
+"""
+
+
 import sqlite3
-t = ('.txt', 'a', 'x')
 
 con = sqlite3.connect('./Texts_db.sqlite')
 cursor = con.cursor()
-cursor.execute('CREATE TABLE files(gid INT, filename VARCHAR(30), newfilename VARCHAR(30), checksum VARCHAR(64),\
-status VARCHAR(4))')
+cursor.execute('CREATE TABLE files(gid INT, filename VARCHAR(30), myfilename VARCHAR(30), checksum VARCHAR(64),\
+                status VARCHAR(4))')
 con.commit()
-
 con.close()
 
